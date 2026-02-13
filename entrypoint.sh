@@ -7,11 +7,10 @@ mkdir -p /home/node/.openclaw
 chown -R node:node /home/node/.openclaw
 chmod -R u+w /home/node/.openclaw
 
-# Switch to node user and create config if needed
-su - node -c '
-if [ ! -f ~/.openclaw/config.yaml ]; then
+# Create config if it doesn't exist
+if [ ! -f /home/node/.openclaw/config.yaml ]; then
     echo "Setting up OpenClaw configuration..."
-    cat > ~/.openclaw/config.yaml << "EOF"
+    cat > /home/node/.openclaw/config.yaml << 'EOF'
 ai:
   provider: openrouter
   model: arcee-ai/trinity-large-preview:free
@@ -26,12 +25,16 @@ gateway:
 telegram:
   enabled: true
 EOF
-    echo "✓ Config created at ~/.openclaw/config.yaml"
+    chown node:node /home/node/.openclaw/config.yaml
+    echo "✓ Config created at /home/node/.openclaw/config.yaml"
 else
-    echo "✓ Using existing config at ~/.openclaw/config.yaml"
+    echo "✓ Using existing config at /home/node/.openclaw/config.yaml"
 fi
-'
 
-# Start OpenClaw gateway as node user
+# Show config for debugging
+echo "Config contents:"
+cat /home/node/.openclaw/config.yaml
+
+# Start OpenClaw gateway as node user with explicit HOME
 echo "Starting OpenClaw gateway..."
-exec su - node -c "openclaw gateway --bind lan --port ${PORT:-8080}"
+exec su node -c "HOME=/home/node openclaw gateway --bind lan --port ${PORT:-8080}"
