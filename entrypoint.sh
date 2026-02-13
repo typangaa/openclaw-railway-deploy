@@ -7,42 +7,25 @@ mkdir -p /home/node/.openclaw
 chown -R node:node /home/node/.openclaw
 chmod -R u+w /home/node/.openclaw
 
-# Create OpenClaw config (JSON format, not YAML!)
+# Create minimal OpenClaw config - let env vars handle most settings
 CONFIG_FILE=/home/node/.openclaw/openclaw.json
-echo "Creating OpenClaw configuration (openclaw.json)..."
+echo "Creating minimal OpenClaw configuration..."
 
-# Create JSON config with environment variable substitution
+# Create minimal JSON config - OpenClaw will read from environment variables
 cat > "$CONFIG_FILE" << EOF
 {
-  "ai": {
-    "provider": "openrouter",
-    "apiKey": "${OPENROUTER_API_KEY}",
-    "model": "arcee-ai/trinity-large-preview:free"
-  },
   "gateway": {
     "mode": "local",
-    "auth": {
-      "type": "token",
-      "token": "${OPENCLAW_GATEWAY_TOKEN}"
-    },
     "trustedProxies": [
       "100.64.0.0/10",
       "127.0.0.1"
     ]
-  },
-  "plugins": {
-    "entries": {
-      "telegram": {
-        "enabled": true,
-        "token": "${TELEGRAM_BOT_TOKEN}"
-      }
-    }
   }
 }
 EOF
 
 chown node:node "$CONFIG_FILE"
-echo "✓ Config created at $CONFIG_FILE"
+echo "✓ Minimal config created - OpenClaw will use environment variables for API keys"
 
 # Show config for debugging
 echo "Config contents:"
