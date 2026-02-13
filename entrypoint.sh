@@ -31,16 +31,23 @@ cat > "$CONFIG_FILE" << EOF
         "primary": "openrouter/arcee-ai/trinity-large-preview:free"
       }
     }
+  },
+  "channels": {
+    "telegram": {
+      "enabled": true,
+      "botToken": "${TELEGRAM_BOT_TOKEN}",
+      "dmPolicy": "pairing"
+    }
   }
 }
 EOF
 
 chown node:node "$CONFIG_FILE"
-echo "✓ Valid config created - OpenClaw will auto-sync Telegram from TELEGRAM_BOT_TOKEN"
+echo "✓ Valid config created with Telegram channel enabled"
 
 # Show config for debugging
 echo "Config contents:"
-cat /home/node/.openclaw/config.yaml
+cat "$CONFIG_FILE"
 
 # Run OpenClaw doctor to fix configuration issues
 echo "Running OpenClaw doctor to fix configuration..."
@@ -49,7 +56,7 @@ runuser -u node -- openclaw doctor --fix || echo "Doctor command completed"
 # Start OpenClaw gateway as node user
 echo "Starting OpenClaw gateway..."
 echo "Working directory: $(pwd)"
-echo "Config file exists: $(test -f /home/node/.openclaw/config.yaml && echo 'yes' || echo 'no')"
+echo "Config file exists: $(test -f $CONFIG_FILE && echo 'yes' || echo 'no')"
 
 # Change to node user's home and start OpenClaw
 cd /home/node
