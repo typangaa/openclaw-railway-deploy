@@ -13,6 +13,9 @@ RUN npm install -g openclaw@latest
 RUN mkdir -p /home/node/.openclaw && \
     chown -R node:node /home/node/.openclaw
 
+# Copy configuration file
+COPY --chown=node:node config.yaml /home/node/.openclaw/config.yaml
+
 # Switch to non-root user
 USER node
 WORKDIR /home/node
@@ -27,9 +30,7 @@ EXPOSE $PORT
 # Start OpenClaw gateway
 # CRITICAL: Use shell form (not exec form) for variable expansion
 # --bind lan: Binds to 0.0.0.0 (required for Railway)
-# --port: Uses Railway's $PORT variable (fallback to 18789)
-# --allow-unconfigured: Starts without existing config file
+# --port: Uses Railway's $PORT variable (fallback to 8080)
 CMD openclaw gateway \
     --bind lan \
-    --port ${PORT:-18789} \
-    --allow-unconfigured
+    --port ${PORT:-8080}

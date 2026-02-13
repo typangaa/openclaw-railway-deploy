@@ -1,0 +1,13 @@
+ai:
+  provider: openrouter
+  model: arcee-ai/trinity-large-preview:free
+
+gateway:
+  auth:
+    type: token
+  trustedProxies:
+    - 100.64.0.0/10
+    - 127.0.0.1
+
+telegram:
+  enabled: true
