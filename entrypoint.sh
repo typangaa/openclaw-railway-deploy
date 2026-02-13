@@ -7,12 +7,18 @@ mkdir -p /home/node/.openclaw
 chown -R node:node /home/node/.openclaw
 chmod -R u+w /home/node/.openclaw
 
-# Create OpenClaw config with valid keys only
+# Check if config already exists (from onboarding or previous setup)
 CONFIG_FILE=/home/node/.openclaw/openclaw.json
-echo "Creating OpenClaw configuration with valid schema..."
 
-# Create config using only officially documented keys
-cat > "$CONFIG_FILE" << EOF
+if [ -f "$CONFIG_FILE" ]; then
+  echo "✓ Existing OpenClaw config found - preserving user configuration"
+  chown node:node "$CONFIG_FILE"
+else
+  echo "No config found - creating minimal bootstrap config..."
+  echo "⚠️  Run 'openclaw onboard' via Railway Shell to complete setup"
+
+  # Create minimal config - onboarding will replace this
+  cat > "$CONFIG_FILE" << EOF
 {
   "gateway": {
     "mode": "local",
@@ -31,19 +37,13 @@ cat > "$CONFIG_FILE" << EOF
         "primary": "openrouter/arcee-ai/trinity-large-preview:free"
       }
     }
-  },
-  "channels": {
-    "telegram": {
-      "enabled": true,
-      "botToken": "${TELEGRAM_BOT_TOKEN}",
-      "dmPolicy": "pairing"
-    }
   }
 }
 EOF
 
-chown node:node "$CONFIG_FILE"
-echo "✓ Valid config created with Telegram channel enabled"
+  chown node:node "$CONFIG_FILE"
+  echo "✓ Bootstrap config created - please run onboarding to configure channels"
+fi
 
 # Show config for debugging
 echo "Config contents:"
