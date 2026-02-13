@@ -7,11 +7,11 @@ mkdir -p /home/node/.openclaw
 chown -R node:node /home/node/.openclaw
 chmod -R u+w /home/node/.openclaw
 
-# Create OpenClaw config with Telegram and web UI access
+# Create OpenClaw config with valid keys only
 CONFIG_FILE=/home/node/.openclaw/openclaw.json
-echo "Creating OpenClaw configuration for Railway deployment..."
+echo "Creating OpenClaw configuration with valid schema..."
 
-# Create config with Railway-optimized settings
+# Create config using only officially documented keys
 cat > "$CONFIG_FILE" << EOF
 {
   "gateway": {
@@ -21,22 +21,22 @@ cat > "$CONFIG_FILE" << EOF
       "127.0.0.1"
     ],
     "auth": {
-      "skipDevicePairingForTrustedProxy": true
-    },
-    "controlUi": {
-      "allowInsecureAuth": false
+      "mode": "token",
+      "token": "${OPENCLAW_GATEWAY_TOKEN}"
     }
   },
-  "channels": {
-    "telegram": {
-      "enabled": true
+  "agents": {
+    "defaults": {
+      "model": {
+        "primary": "openrouter/arcee-ai/trinity-large-preview:free"
+      }
     }
   }
 }
 EOF
 
 chown node:node "$CONFIG_FILE"
-echo "✓ Config created with Railway proxy support and Telegram enabled"
+echo "✓ Valid config created - OpenClaw will auto-sync Telegram from TELEGRAM_BOT_TOKEN"
 
 # Show config for debugging
 echo "Config contents:"
