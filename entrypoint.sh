@@ -7,37 +7,33 @@ mkdir -p /home/node/.openclaw
 chown -R node:node /home/node/.openclaw
 chmod -R u+w /home/node/.openclaw
 
-# Create config if it doesn't exist
+# Create config with environment variable substitution
 CONFIG_FILE=/home/node/.openclaw/config.yaml
-if [ ! -f "$CONFIG_FILE" ]; then
-    echo "Setting up OpenClaw configuration..."
-else
-    echo "Config exists, recreating with latest settings..."
-fi
+echo "Creating OpenClaw configuration with environment variables..."
 
-# Always recreate config to ensure it has all required fields
+# Substitute environment variables and write config
 cat > "$CONFIG_FILE" << EOF
 ai:
   provider: openrouter
-  apiKey: \${OPENROUTER_API_KEY}
+  apiKey: ${OPENROUTER_API_KEY}
   model: arcee-ai/trinity-large-preview:free
 
 gateway:
   mode: server
   auth:
     type: token
-    token: \${OPENCLAW_GATEWAY_TOKEN}
+    token: ${OPENCLAW_GATEWAY_TOKEN}
   trustedProxies:
     - 100.64.0.0/10
     - 127.0.0.1
 
 telegram:
   enabled: true
-  token: \${TELEGRAM_BOT_TOKEN}
+  token: ${TELEGRAM_BOT_TOKEN}
 EOF
 
 chown node:node "$CONFIG_FILE"
-echo "✓ Config created at $CONFIG_FILE"
+echo "✓ Config created at $CONFIG_FILE with substituted values"
 
 # Show config for debugging
 echo "Config contents:"
