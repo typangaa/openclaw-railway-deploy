@@ -7,11 +7,11 @@ mkdir -p /home/node/.openclaw
 chown -R node:node /home/node/.openclaw
 chmod -R u+w /home/node/.openclaw
 
-# Create minimal OpenClaw config - let env vars handle most settings
+# Create OpenClaw config with Telegram enabled
 CONFIG_FILE=/home/node/.openclaw/openclaw.json
-echo "Creating minimal OpenClaw configuration..."
+echo "Creating OpenClaw configuration with Telegram..."
 
-# Create minimal JSON config - OpenClaw will read from environment variables
+# Create config with Telegram explicitly enabled
 cat > "$CONFIG_FILE" << EOF
 {
   "gateway": {
@@ -20,12 +20,17 @@ cat > "$CONFIG_FILE" << EOF
       "100.64.0.0/10",
       "127.0.0.1"
     ]
+  },
+  "channels": {
+    "telegram": {
+      "enabled": true
+    }
   }
 }
 EOF
 
 chown node:node "$CONFIG_FILE"
-echo "✓ Minimal config created - OpenClaw will use environment variables for API keys"
+echo "✓ Config created with Telegram enabled"
 
 # Show config for debugging
 echo "Config contents:"
