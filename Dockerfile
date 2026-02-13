@@ -13,12 +13,11 @@ RUN npm install -g openclaw@latest
 RUN mkdir -p /home/node/.openclaw && \
     chown -R node:node /home/node/.openclaw
 
-# Copy entrypoint script
-COPY --chown=node:node entrypoint.sh /home/node/entrypoint.sh
-RUN chmod +x /home/node/entrypoint.sh
+# Copy entrypoint script and make it executable
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
 
-# Switch to non-root user
-USER node
+# Set working directory (but stay as root for entrypoint to fix permissions)
 WORKDIR /home/node
 
 # Set environment variables
@@ -29,6 +28,6 @@ ENV NODE_ENV=production
 EXPOSE $PORT
 
 # Start OpenClaw gateway via entrypoint script
-# The script creates config.yaml if it doesn't exist in the volume
-# Then starts the gateway with Railway's dynamic port
-CMD ["/home/node/entrypoint.sh"]
+# Script runs as root to fix volume permissions, then switches to node user
+# Creates config.yaml if it doesn't exist, then starts the gateway
+CMD ["/usr/local/bin/entrypoint.sh"]
