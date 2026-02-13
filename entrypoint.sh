@@ -7,11 +7,11 @@ mkdir -p /home/node/.openclaw
 chown -R node:node /home/node/.openclaw
 chmod -R u+w /home/node/.openclaw
 
-# Create OpenClaw config with Telegram enabled
+# Create OpenClaw config with Telegram and web UI access
 CONFIG_FILE=/home/node/.openclaw/openclaw.json
-echo "Creating OpenClaw configuration with Telegram..."
+echo "Creating OpenClaw configuration for Railway deployment..."
 
-# Create config with Telegram explicitly enabled
+# Create config with Railway-optimized settings
 cat > "$CONFIG_FILE" << EOF
 {
   "gateway": {
@@ -19,7 +19,13 @@ cat > "$CONFIG_FILE" << EOF
     "trustedProxies": [
       "100.64.0.0/10",
       "127.0.0.1"
-    ]
+    ],
+    "auth": {
+      "skipDevicePairingForTrustedProxy": true
+    },
+    "controlUi": {
+      "allowInsecureAuth": false
+    }
   },
   "channels": {
     "telegram": {
@@ -30,7 +36,7 @@ cat > "$CONFIG_FILE" << EOF
 EOF
 
 chown node:node "$CONFIG_FILE"
-echo "✓ Config created with Telegram enabled"
+echo "✓ Config created with Railway proxy support and Telegram enabled"
 
 # Show config for debugging
 echo "Config contents:"
