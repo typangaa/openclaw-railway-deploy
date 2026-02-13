@@ -39,10 +39,13 @@ echo "✓ Config created at $CONFIG_FILE with substituted values"
 echo "Config contents:"
 cat /home/node/.openclaw/config.yaml
 
+# Run OpenClaw doctor to fix configuration issues
+echo "Running OpenClaw doctor to fix configuration..."
+runuser -u node -- openclaw doctor --fix || echo "Doctor command completed"
+
 # Start OpenClaw gateway as node user
 echo "Starting OpenClaw gateway..."
 echo "Working directory: $(pwd)"
-echo "HOME will be: /home/node"
 echo "Config file exists: $(test -f /home/node/.openclaw/config.yaml && echo 'yes' || echo 'no')"
 
 # Change to node user's home and start OpenClaw
