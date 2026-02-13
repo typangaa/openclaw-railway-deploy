@@ -39,6 +39,12 @@ echo "✓ Config created at $CONFIG_FILE with substituted values"
 echo "Config contents:"
 cat /home/node/.openclaw/config.yaml
 
-# Start OpenClaw gateway as node user with explicit HOME
+# Start OpenClaw gateway as node user
 echo "Starting OpenClaw gateway..."
-exec su node -c "HOME=/home/node openclaw gateway --bind lan --port ${PORT:-8080}"
+echo "Working directory: $(pwd)"
+echo "HOME will be: /home/node"
+echo "Config file exists: $(test -f /home/node/.openclaw/config.yaml && echo 'yes' || echo 'no')"
+
+# Change to node user's home and start OpenClaw
+cd /home/node
+exec runuser -u node -- openclaw gateway --bind lan --port ${PORT:-8080}
