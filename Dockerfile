@@ -9,17 +9,16 @@ RUN apt-get update && \
 # Install OpenClaw globally from npm
 RUN npm install -g openclaw@latest
 
-# Create non-root user for security
-RUN useradd -m -u 1000 openclaw && \
-    mkdir -p /home/openclaw/.openclaw && \
-    chown -R openclaw:openclaw /home/openclaw
+# Use existing node user (already has UID 1000)
+RUN mkdir -p /home/node/.openclaw && \
+    chown -R node:node /home/node/.openclaw
 
 # Switch to non-root user
-USER openclaw
-WORKDIR /home/openclaw
+USER node
+WORKDIR /home/node
 
 # Set environment variables
-ENV HOME=/home/openclaw
+ENV HOME=/home/node
 ENV NODE_ENV=production
 
 # Expose Railway's dynamic port
